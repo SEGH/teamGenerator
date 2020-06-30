@@ -77,31 +77,52 @@ const internQuestions = [
     }
 ];
 
-// Write code to use inquirer to gather information about the development team members,
+// Function to start inquirer prompts, beginning with questions about the manager
+const buildTeam = function() {
+    console.log("Let's build your dev team!")
+    inquirer.prompt(managerQuestions).then(manager => {
+        let newManager = new Manager(manager.fullName, manager.id, manager.email, manager.office);
+        console.log(newManager);
+        chooseEmployee();
+    });
+}
 
-inquirer.prompt(managerQuestions).then(manager => {
-    let newManager = new Manager(manager.fullName, "Manager", manager.id, manager.email, manager.office);
-    console.log(newManager);
-    inquirer.prompt(createEmployee).then(answer => {
-        if (answer.role === "None") {
-            return console.log("Team complete");
+// Function to run prompt question determining employee type, asking general employee questions, and exiting if selected
+const chooseEmployee = function() {
+    inquirer.prompt(createEmployee).then(type => {
+        if (type.role === "Engineer") {
+            console.log("Let's hire an engineer!");
+            askEmployee(type.role);
+        } else if (type.role === "Intern") {
+            console.log("Let's hire an intern!");
+            askEmployee(type.role);
+        } else if (type.role === "None") {
+            console.log("Team complete!");
+        }
+    });
+}
+
+// Function to ask specific employee questions based on type and re-call employee choice prompt
+const askEmployee = function(role) {
+    inquirer.prompt(employeeQuestions).then(employee => {
+        if (role === "Engineer") {
+            inquirer.prompt(engineerQuestions).then(data => {
+                let newEngineer = new Engineer(employee.fullName, employee.id, employee.email, data.username);
+                console.log(newEngineer);
+                chooseEmployee();
+            });
         } else {
-            inquirer.prompt(employeeQuestions).then(employee => {
-                if (answer.role === "Engineer") {
-                    inquirer.prompt(engineerQuestions).then(data => {
-                        let newEngineer = new Engineer(employee.fullName, employee.role, employee.id, employee.email, data.username);
-                        console.log(newEngineer);
-                    });
-                } else if (answer.role === "Intern") {
-                    inquirer.prompt(internQuestions).then(data => {
-                        let newIntern = new Intern(employee.fullName, employee.role, employee.id, employee.email, data.school);
-                        console.log(newIntern);
-                    });
-                }
+            inquirer.prompt(internQuestions).then(data => {
+                let newIntern = new Intern(employee.fullName, employee.id, employee.email, data.school);
+                console.log(newIntern);
+                chooseEmployee();
             });
         }
     });
-});
+}
+
+buildTeam();
+
 // and to create objects for each team member (using the correct classes as blueprints!)
 
 // After the user has input all employees desired, call the `render` function (required
