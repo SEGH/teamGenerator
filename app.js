@@ -63,18 +63,18 @@ const internQuestions = [
 inquirer.prompt(employeeQuestions).then(employee => {
     if (employee.role === "Manager") {
         inquirer.prompt(managerQuestions).then(data => {
-            console.log(employee);
-            console.log(data);
+            let newManager = new Manager(employee.name, employee.role, employee.id, employee.email, data.office);
+            console.log(newManager);
         });
     } else if (employee.role === "Engineer") {
         inquirer.prompt(engineerQuestions).then(data => {
-            console.log(employee);
-            console.log(data);
+            let newEngineer = new Engineer(employee.name, employee.role, employee.id, employee.email, data.username);
+            console.log(newEngineer);
         });
     } else if (employee.role === "Intern") {
         inquirer.prompt(internQuestions).then(data => {
-            console.log(employee);
-            console.log(data);
+            let newIntern = new Intern(employee.name, employee.role, employee.id, employee.email, data.school);
+            console.log(newIntern);
         })
     }
 });
