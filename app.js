@@ -11,17 +11,20 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 const render = require("./lib/htmlRenderer");
 
 // Prompt question arrays
+const createEmployee = [
+    {
+        type: "list",
+        message: "Select employee role to create new employee, or None if team is complete:",
+        name: "role",
+        choices: ["Engineer", "Intern", "None"]
+    }
+];
+
 const employeeQuestions = [
     {
         type: "input",
         message: "Enter the employee's name:",
         name: "fullName"
-    },
-    {
-        type: "list",
-        message: "Select employee role:",
-        name: "role",
-        choices: ["Manager", "Engineer", "Intern"]
     },
     {
         type: "input",
@@ -36,6 +39,21 @@ const employeeQuestions = [
 ];
 
 const managerQuestions = [
+    {
+        type: "input",
+        message: "Enter the manager's name:",
+        name: "fullName"
+    },
+    {
+        type: "input",
+        message: "What is the manager's id number?",
+        name: "id"
+    },
+    {
+        type: "input",
+        message: "What is the manager's email address?",
+        name: "email"
+    },
     {
         type: "input",
         message: "What is this manager's office number?",
@@ -60,23 +78,29 @@ const internQuestions = [
 ];
 
 // Write code to use inquirer to gather information about the development team members,
-inquirer.prompt(employeeQuestions).then(employee => {
-    if (employee.role === "Manager") {
-        inquirer.prompt(managerQuestions).then(data => {
-            let newManager = new Manager(employee.name, employee.role, employee.id, employee.email, data.office);
-            console.log(newManager);
-        });
-    } else if (employee.role === "Engineer") {
-        inquirer.prompt(engineerQuestions).then(data => {
-            let newEngineer = new Engineer(employee.name, employee.role, employee.id, employee.email, data.username);
-            console.log(newEngineer);
-        });
-    } else if (employee.role === "Intern") {
-        inquirer.prompt(internQuestions).then(data => {
-            let newIntern = new Intern(employee.name, employee.role, employee.id, employee.email, data.school);
-            console.log(newIntern);
-        })
-    }
+
+inquirer.prompt(managerQuestions).then(manager => {
+    let newManager = new Manager(manager.fullName, "Manager", manager.id, manager.email, manager.office);
+    console.log(newManager);
+    inquirer.prompt(createEmployee).then(answer => {
+        if (answer.role === "None") {
+            return console.log("Team complete");
+        } else {
+            inquirer.prompt(employeeQuestions).then(employee => {
+                if (answer.role === "Engineer") {
+                    inquirer.prompt(engineerQuestions).then(data => {
+                        let newEngineer = new Engineer(employee.fullName, employee.role, employee.id, employee.email, data.username);
+                        console.log(newEngineer);
+                    });
+                } else if (answer.role === "Intern") {
+                    inquirer.prompt(internQuestions).then(data => {
+                        let newIntern = new Intern(employee.fullName, employee.role, employee.id, employee.email, data.school);
+                        console.log(newIntern);
+                    });
+                }
+            });
+        }
+    });
 });
 // and to create objects for each team member (using the correct classes as blueprints!)
 
