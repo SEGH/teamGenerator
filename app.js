@@ -29,12 +29,26 @@ const employeeQuestions = [
     {
         type: "input",
         message: "What is the employee's id number?",
-        name: "id"
+        name: "id",
+        validate: function(input) {
+            let letters = /[a-z]/gi;
+            if (input.match(letters) !== null) {
+                return "Must be a number";
+            }
+            return true;
+        }
     },
     {
         type: "input",
         message: "What is the employee's email address?",
-        name: "email"
+        name: "email",
+        validate: function(input) {
+            let address = /([a-z1-9])+@([a-z1-9])+\.com/i;
+            if (input.match(address) === null) {
+                return "Invalid email address";
+            }
+            return true;
+        }
     }
 ];
 
@@ -47,17 +61,38 @@ const managerQuestions = [
     {
         type: "input",
         message: "What is the manager's id number?",
-        name: "id"
+        name: "id",
+        validate: function(input) {
+            let letters = /[a-z]/gi;
+            if (input.match(letters) !== null) {
+                return "Must be a number";
+            }
+            return true;
+        }
     },
     {
         type: "input",
         message: "What is the manager's email address?",
-        name: "email"
+        name: "email",
+        validate: function(input) {
+            let address = /([a-z1-9])+@([a-z1-9])+\.com/i;
+            if (input.match(address) === null) {
+                return "Invalid email address";
+            }
+            return true;
+        }
     },
     {
         type: "input",
         message: "What is this manager's office number?",
-        name: "office"
+        name: "office",
+        validate: function(input) {
+            let letters = /[a-z]/gi;
+            if (input.match(letters) !== null) {
+                return "Must be a number";
+            }
+            return true;
+        }
     }
 ];
 
@@ -76,6 +111,15 @@ const internQuestions = [
         name: "school"
     }
 ];
+
+// Validation Functions
+// const catchLetters = input => {
+//     let letters = /[a-z]/gi;
+//     if (input.match(letters) !== null) {
+//         return "Must be a number";
+//     }
+//     return true;
+// }
 
 // Employee Array
 const employees = [];
@@ -135,13 +179,3 @@ const askEmployee = function(role) {
 }
 
 buildTeam();
-
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
-
-// After you have your html, you're now ready to create an HTML file using the HTML
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
