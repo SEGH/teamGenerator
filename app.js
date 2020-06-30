@@ -77,12 +77,16 @@ const internQuestions = [
     }
 ];
 
+// Employee Array
+const employees = [];
+
 // Function to start inquirer prompts, beginning with questions about the manager
 const buildTeam = function() {
     console.log("Let's build your dev team!")
     inquirer.prompt(managerQuestions).then(manager => {
         let newManager = new Manager(manager.fullName, manager.id, manager.email, manager.office);
-        console.log(newManager);
+        employees.push(newManager);
+        console.log("Manager Saved");
         chooseEmployee();
     });
 }
@@ -97,7 +101,14 @@ const chooseEmployee = function() {
             console.log("Let's hire an intern!");
             askEmployee(type.role);
         } else if (type.role === "None") {
-            console.log("Team complete!");
+            let renderedCode = render(employees);
+            fs.writeFile(outputPath, renderedCode, err => {
+                if (err) {
+                    console.log("Error in writing file");
+                } else {
+                    console.log("Team complete! Your profiles have been created at " + outputPath);
+                }
+            });
         }
     });
 }
@@ -108,13 +119,15 @@ const askEmployee = function(role) {
         if (role === "Engineer") {
             inquirer.prompt(engineerQuestions).then(data => {
                 let newEngineer = new Engineer(employee.fullName, employee.id, employee.email, data.username);
-                console.log(newEngineer);
+                employees.push(newEngineer);
+                console.log("Engineer Saved");
                 chooseEmployee();
             });
         } else {
             inquirer.prompt(internQuestions).then(data => {
                 let newIntern = new Intern(employee.fullName, employee.id, employee.email, data.school);
-                console.log(newIntern);
+                employees.push(newIntern);
+                console.log("Intern Saved");
                 chooseEmployee();
             });
         }
@@ -122,8 +135,6 @@ const askEmployee = function(role) {
 }
 
 buildTeam();
-
-// and to create objects for each team member (using the correct classes as blueprints!)
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
@@ -134,9 +145,3 @@ buildTeam();
 // `output` folder. You can use the variable `outputPath` above target this location.
 // Hint: you may need to check if the `output` folder exists and create it if it
 // does not.
-
-// HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
-// and Intern classes should all extend from a class named Employee; see the directions
-// for further information. Be sure to test out each class and verify it generates an
-// object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work! ```
