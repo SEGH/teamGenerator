@@ -10,6 +10,9 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+// Employee Array
+const employees = [];
+
 // Prompt question arrays
 const createEmployee = [
     {
@@ -30,19 +33,22 @@ const employeeQuestions = [
         type: "input",
         message: "What is the employee's id number?",
         name: "id",
-        validate: function(input) {
-            let letters = /[a-z]/gi;
-            if (input.match(letters) !== null) {
-                return "Must be a number";
-            }
-            return true;
+        default: function () {
+            return employees.length + 1;
         }
+        // validate: function(input) {
+        //     let letters = /[a-z]/gi;
+        //     if (input.match(letters) !== null) {
+        //         return "Must be a number";
+        //     }
+        //     return true;
+        // }
     },
     {
         type: "input",
         message: "What is the employee's email address?",
         name: "email",
-        validate: function(input) {
+        validate: function (input) {
             let address = /([a-z1-9])+@([a-z1-9])+\.com/i;
             if (input.match(address) === null) {
                 return "Invalid email address";
@@ -56,25 +62,37 @@ const managerQuestions = [
     {
         type: "input",
         message: "Enter the manager's name:",
-        name: "fullName"
-    },
-    {
-        type: "input",
-        message: "What is the manager's id number?",
-        name: "id",
-        validate: function(input) {
-            let letters = /[a-z]/gi;
-            if (input.match(letters) !== null) {
-                return "Must be a number";
+        name: "fullName",
+        validate: function (input) {
+            if (!input) {
+                return "Please enter a name";
             }
             return true;
         }
     },
     {
         type: "input",
+        message: "What is the manager's id number?",
+        name: "id",
+        default: function () {
+            return employees.length + 1;
+        }
+        // validate: function(input) {
+        //     let letters = /[a-z]/gi;
+        //     if (input.match(letters) !== null) {
+        //         return "Must be a number";
+        //     }
+        //     if (!input) {
+        //         return "Please enter an id number";
+        //     }
+        //     return true;
+        // }
+    },
+    {
+        type: "input",
         message: "What is the manager's email address?",
         name: "email",
-        validate: function(input) {
+        validate: function (input) {
             let address = /([a-z1-9])+@([a-z1-9])+\.com/i;
             if (input.match(address) === null) {
                 return "Invalid email address";
@@ -86,10 +104,13 @@ const managerQuestions = [
         type: "input",
         message: "What is this manager's office number?",
         name: "office",
-        validate: function(input) {
+        validate: function (input) {
             let letters = /[a-z]/gi;
             if (input.match(letters) !== null) {
                 return "Must be a number";
+            }
+            if (!input) {
+                return "Please enter an office number";
             }
             return true;
         }
@@ -100,7 +121,13 @@ const engineerQuestions = [
     {
         type: "input",
         message: "What is this engineer's GitHub username?",
-        name: "username"
+        name: "username",
+        validate: function (input) {
+            if (!input) {
+                return "Please enter a username";
+            }
+            return true;
+        }
     }
 ];
 
@@ -108,7 +135,13 @@ const internQuestions = [
     {
         type: "input",
         message: "Where does this intern attend school?",
-        name: "school"
+        name: "school",
+        validate: function (input) {
+            if (!input) {
+                return "Please enter a school";
+            }
+            return true;
+        }
     }
 ];
 
@@ -121,11 +154,10 @@ const internQuestions = [
 //     return true;
 // }
 
-// Employee Array
-const employees = [];
+
 
 // Function to start inquirer prompts, beginning with questions about the manager
-const buildTeam = function() {
+const buildTeam = function () {
     console.log("Let's build your dev team!")
     inquirer.prompt(managerQuestions).then(manager => {
         let newManager = new Manager(manager.fullName, manager.id, manager.email, manager.office);
@@ -136,7 +168,7 @@ const buildTeam = function() {
 }
 
 // Function to run prompt question determining employee type, asking general employee questions, and exiting if selected
-const chooseEmployee = function() {
+const chooseEmployee = function () {
     inquirer.prompt(createEmployee).then(type => {
         if (type.role === "Engineer") {
             console.log("Let's hire an engineer!");
@@ -158,7 +190,7 @@ const chooseEmployee = function() {
 }
 
 // Function to ask specific employee questions based on type and re-call employee choice prompt
-const askEmployee = function(role) {
+const askEmployee = function (role) {
     inquirer.prompt(employeeQuestions).then(employee => {
         if (role === "Engineer") {
             inquirer.prompt(engineerQuestions).then(data => {
